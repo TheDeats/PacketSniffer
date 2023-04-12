@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:PacketSniffer"
         mc:Ignorable="d"
         Background="#FFF0F0F0"
-        Title="Packet Sniffer - Group 5 - CECS378" Height="400" Width="550"
+        Title="Packet Sniffer - Group 5 - CECS378" Height="525" Width="550"
     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2">
 
     <Window.DataContext>
@@ -17,9 +17,6 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
-            <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
@@ -29,17 +26,23 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Label Content="Device List: " Grid.Row="1" Grid.Column="1"></Label>
-        <ComboBox x:Name="DeviceListComboBox" Grid.Column="2" Grid.Row="1" Width="250" Background="White" ItemsSource="{Binding DeviceNames}" SelectedIndex="{Binding SelectedDeviceIndex}"></ComboBox>
-        <Button x:Name="RefreshDeviceListButton" Content="Refresh" Grid.Column="3" Grid.Row="1" Width="70" Margin="10,0,0,0" Command="{Binding RefreshDeviceListCommand}"></Button>
+        <WrapPanel Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center">
+            <Label Content="Device List: " ></Label>
+            <ComboBox x:Name="DeviceListComboBox" Width="250" Background="White" ItemsSource="{Binding DeviceNames}" SelectedIndex="{Binding SelectedDeviceIndex}" Margin="0,0,20,0"></ComboBox>
+            <Button x:Name="RefreshDeviceListButton" Content="Refresh" Width="70" Command="{Binding RefreshDeviceListCommand}"></Button>
+        </WrapPanel>
 
-        <Button x:Name="StartSniffingButton" Content="Start Sniffing" Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="2" Margin="20,10,0,10" HorizontalAlignment="Left" Command="{Binding StartSniffingCommand}"/>
-        <Button x:Name="StopSniffingButton" Content="Stop Sniffing" Grid.Column="2" Grid.ColumnSpan="1" Grid.Row="2" Margin="30,10,0,10" HorizontalAlignment="Left" Command="{Binding StopSniffingCommand}"/>
-        <ListView x:Name="CapturedPacketsList" ItemsSource="{Binding DisplayPackets}" SelectedIndex="{Binding SelectedPacketIndex}" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="4" HorizontalAlignment="Left"
-                  Height="250" Margin="10,0,0,0" Width="475">
+        <WrapPanel Grid.Column="1" Grid.Row="2">
+            <Button x:Name="StartSniffingButton" Content="Start Sniffing" Height="25" Width="85" Margin="20,10,0,10" HorizontalAlignment="Left" Command="{Binding StartSniffingCommand}"/>
+            <Button x:Name="StopSniffingButton" Content="Stop Sniffing" Width="85" Margin="20,10,0,10" HorizontalAlignment="Left" Command="{Binding StopSniffingCommand}"/>
+        </WrapPanel>
+        
+        <ListView x:Name="CapturedPacketsList" ItemsSource="{Binding DisplayPackets}" SelectedIndex="{Binding SelectedPacketIndex}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
+                  Height="250" Margin="10,0,0,0" Width="495">
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
@@ -49,13 +52,18 @@
                 <GridView>
                     <GridViewColumn Header="Packet #" DisplayMemberBinding="{Binding Number}" Width="50"/>
                     <GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time}" Width="90"/>
-                    <GridViewColumn Header="Source" DisplayMemberBinding="{Binding Source}" Width="100"/>
-                    <GridViewColumn Header="Desitnation" DisplayMemberBinding="{Binding Destination}" Width="100"/>
+                    <GridViewColumn Header="Source" DisplayMemberBinding="{Binding Source}" Width="110"/>
+                    <GridViewColumn Header="Desitnation" DisplayMemberBinding="{Binding Destination}" Width="110"/>
                     <GridViewColumn Header="Protocol" DisplayMemberBinding="{Binding Protocol}" Width="50"/>
                     <GridViewColumn Header="Length" DisplayMemberBinding="{Binding Length}" Width="50"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        
+
+        <Label Content="Packet Data:" Grid.Row="4" Grid.Column="1" Margin="10,15,0,0"/>
+        <ScrollViewer Grid.Row="5" Grid.Column="1" Margin="10,0,0,0" Height="100">
+            <TextBlock x:Name="packetDataRichTextBox" Background="White" Foreground="Black" Text="{Binding PacketDataText}" MaxWidth="475" ></TextBlock>
+        </ScrollViewer>
+        <Border BorderThickness="0.5" BorderBrush="Black" Grid.Row="5" Grid.Column="1" Margin="10,0,0,0"/>
     </Grid>
 </Window>

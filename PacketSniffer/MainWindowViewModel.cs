@@ -30,6 +30,11 @@ namespace PacketSniffer
             get => packetSnifferModel.DisplayPackets;
         }
 
+        public string PacketDataText
+        {
+            get => packetSnifferModel.PacketDataText;
+        }
+
         public int SelectedDeviceIndex
         {
             get => packetSnifferModel.SelectedDeviceIndex;

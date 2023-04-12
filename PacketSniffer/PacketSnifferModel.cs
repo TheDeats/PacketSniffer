@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using PacketDotNet;
 using SharpPcap;
 using SharpPcap.LibPcap;
-using PacketDotNet;
 using System.Windows;
 
 namespace PacketSniffer
@@ -21,9 +20,10 @@ namespace PacketSniffer
         private int selectedDeviceIndex;
         private int selectedPacketIndex;
         private int nextPacketNumber = 1;
-        ObservableCollection<DisplayPacket> displayPackets = new ObservableCollection<DisplayPacket>();
-        List<RawCapture> sniffedPackets = new List<RawCapture>();
+        private ObservableCollection<DisplayPacket> displayPackets = new ObservableCollection<DisplayPacket>();
+        private List<RawCapture> sniffedPackets = new List<RawCapture>();
         //private string saveFilePath = Environment.CurrentDirectory + "packet_data.pcap";
+        private string packetDataText = string.Empty;
 
         #endregion
 
@@ -42,7 +42,11 @@ namespace PacketSniffer
         public int SelectedPacketIndex
         {
             get { return selectedPacketIndex; }
-            set { selectedPacketIndex = value; }
+            set 
+            { 
+                selectedPacketIndex = value;
+                UpdatePacketText();
+            }
         }
 
         public ObservableCollection<DisplayPacket> DisplayPackets
@@ -53,6 +57,16 @@ namespace PacketSniffer
         public int NextPacketNumber
         {
             get => nextPacketNumber++;
+        }
+
+        public string PacketDataText
+        {
+            get { return packetDataText; }
+            set 
+            { 
+                packetDataText = value;
+                RaisePropertyChanged(nameof(PacketDataText));
+            }
         }
 
         public List<RawCapture> SniffedPackets
@@ -74,9 +88,11 @@ namespace PacketSniffer
         {
             try
             {
+                int pacificStandardTimeOffset = -7;
                 RawCapture packet = e.GetPacket();
                 DateTime arrivalTime = packet.Timeval.Date;
-                string timeFormatted = arrivalTime.ToString("hh:mm:ss:fff");
+                DateTime pacificStandardTime = arrivalTime.AddHours(pacificStandardTimeOffset);
+                string timeFormatted = pacificStandardTime.ToString("h:mm:ss:fff");
                 int length = packet.Data.Length;
 
                 // using nuGet packet PacketDotNet for IPPacket extraction
@@ -163,6 +179,14 @@ namespace PacketSniffer
             {
                 // catch and ignore
             }
+        }
+
+        private void UpdatePacketText()
+        {
+            RawCapture packet = SniffedPackets[SelectedPacketIndex];
+            byte[] dataBytes = packet.Data;
+            string text = System.Text.Encoding.ASCII.GetString(dataBytes);
+            PacketDataText = text;
         }
         #endregion
     }
