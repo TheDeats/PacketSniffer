@@ -17,6 +17,8 @@ namespace PacketSniffer
         public ICommand RefreshDeviceListCommand => new AsyncCommand(packetSnifferModel.RefreshDeviceList);
         public ICommand StartSniffingCommand => new AsyncCommand(packetSnifferModel.StartSniffing);
         public ICommand StopSniffingCommand => new AsyncCommand(packetSnifferModel.StopSniffing);
+        public ICommand SearchCommand => new AsyncCommand(packetSnifferModel.DisplaySearchWindow);
+        public ICommand ClearCommand => new AsyncCommand(packetSnifferModel.ClearPackets);
         #endregion
 
         #region Properties
@@ -28,6 +30,12 @@ namespace PacketSniffer
         public ObservableCollection<DisplayPacket> DisplayPackets
         {
             get => packetSnifferModel.DisplayPackets;
+        }
+
+        public bool IsSniffing
+        {
+            get => packetSnifferModel.IsSniffing;
+            set => packetSnifferModel.IsSniffing = value;
         }
 
         public string PacketDataText

@@ -1,0 +1,34 @@
+﻿<Window x:Class="PacketSniffer.SearchView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PacketSniffer"
+        mc:Ignorable="d"
+        Title="Search Packets" Height="350" Width="530">
+    <StackPanel>
+        <WrapPanel>
+            <Label Content="Keyphrase:" Margin="0,10,0,10"></Label>
+            <TextBox x:Name="SearchTextBox" Text="{Binding SearchText}" Width="300" Margin="0,10,0,10" VerticalAlignment="Center"></TextBox>
+            <Button x:Name="SearchButton" Content="Search" Width="85" Margin="20,10,0,10" Command="{Binding SearchCommand}"></Button>
+        </WrapPanel>
+        <ListView x:Name="CapturedPacketsList" ItemsSource="{Binding DisplayPackets}" SelectedIndex="{Binding SelectedPacketIndex}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
+                  Height="250" Margin="10,0,0,0" Width="495">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Center"></Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Packet #" DisplayMemberBinding="{Binding Number}" Width="50"/>
+                    <GridViewColumn Header="Time" DisplayMemberBinding="{Binding Time}" Width="90"/>
+                    <GridViewColumn Header="Source" DisplayMemberBinding="{Binding Source}" Width="110"/>
+                    <GridViewColumn Header="Desitnation" DisplayMemberBinding="{Binding Destination}" Width="110"/>
+                    <GridViewColumn Header="Protocol" DisplayMemberBinding="{Binding Protocol}" Width="50"/>
+                    <GridViewColumn Header="Length" DisplayMemberBinding="{Binding Length}" Width="50"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </StackPanel>
+</Window>

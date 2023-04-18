@@ -13,6 +13,21 @@
         <local:MainWindowViewModel/>
     </Window.DataContext>
 
+    <Window.Resources>
+        <Style x:Key="SniffingStyle" TargetType="{x:Type Button}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsSniffing}" Value="True">
+                    <Setter Property="Visibility" Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSniffing}" Value="False">
+                    <Setter Property="Visibility" Value="Visible" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"></ColumnDefinition>
@@ -36,11 +51,11 @@
             <Button x:Name="RefreshDeviceListButton" Content="Refresh" Width="70" Command="{Binding RefreshDeviceListCommand}"></Button>
         </WrapPanel>
 
-        <WrapPanel Grid.Column="1" Grid.Row="2">
-            <Button x:Name="StartSniffingButton" Content="Start Sniffing" Height="25" Width="85" Margin="20,10,0,10" HorizontalAlignment="Left" Command="{Binding StartSniffingCommand}"/>
-            <Button x:Name="StopSniffingButton" Content="Stop Sniffing" Width="85" Margin="20,10,0,10" HorizontalAlignment="Left" Command="{Binding StopSniffingCommand}"/>
-        </WrapPanel>
-        
+        <Button x:Name="StopSniffingButton" Content="Stop Sniffing" Width="85" Margin="20,10,0,10" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Command="{Binding StopSniffingCommand}"/>
+        <Button x:Name="StartSniffingButton" Content="Start Sniffing" Style="{StaticResource SniffingStyle}" Height="25" Width="85" Margin="20,10,0,10" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left" Command="{Binding StartSniffingCommand}"/>
+        <Button x:Name="ClearButton" Content="Clear" Width="85" Margin="130,10,0,10" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="2" Command="{Binding ClearCommand}"/>
+        <Button x:Name="SearchButton" Content="Search" Width="85" Margin="240,10,0,10" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="2" Command="{Binding SearchCommand}"/>
+
         <ListView x:Name="CapturedPacketsList" ItemsSource="{Binding DisplayPackets}" SelectedIndex="{Binding SelectedPacketIndex}" Grid.Row="3" Grid.Column="1" HorizontalAlignment="Left"
                   Height="250" Margin="10,0,0,0" Width="495">
             <ListView.ItemContainerStyle>

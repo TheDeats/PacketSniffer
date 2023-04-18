@@ -8,6 +8,8 @@ using PacketDotNet;
 using SharpPcap;
 using SharpPcap.LibPcap;
 using System.Windows;
+using PacketSniffer.ViewModels;
+using System.Windows.Documents;
 
 namespace PacketSniffer
 {
@@ -24,11 +26,19 @@ namespace PacketSniffer
         private List<RawCapture> sniffedPackets = new List<RawCapture>();
         //private string saveFilePath = Environment.CurrentDirectory + "packet_data.pcap";
         private string packetDataText = string.Empty;
+        private string searchText = string.Empty;
+        private bool isSniffing = false;
 
         #endregion
 
         #region Properties
         public ObservableCollection<string> DeviceNames { get; private set; }
+
+        public string SearchText
+        {
+            get { return searchText; }
+            set { searchText = value; }
+        }
         public int SelectedDeviceIndex
         {
             get { return selectedDeviceIndex; }
@@ -45,7 +55,18 @@ namespace PacketSniffer
             set 
             { 
                 selectedPacketIndex = value;
+                RaisePropertyChanged(nameof(SelectedPacketIndex));
                 UpdatePacketText();
+            }
+        }
+
+        public bool IsSniffing
+        {
+            get { return isSniffing; }
+            set 
+            { 
+                isSniffing = value;
+                RaisePropertyChanged(nameof(IsSniffing));
             }
         }
 
@@ -84,6 +105,28 @@ namespace PacketSniffer
         #endregion
 
         #region Methods
+
+        public async Task ClearPackets()
+        {
+            DisplayPackets.Clear();
+            SniffedPackets.Clear();
+            nextPacketNumber = 1;
+            RaisePropertyChanged(nameof(DisplayPackets));
+        }
+
+        public async Task DisplaySearchWindow()
+        {
+            try
+            {
+                SearchViewModel searchViewModel = new SearchViewModel(this);
+                searchViewModel.DisplaySearchWindow();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Error searching the packets, {e.Message}");
+            }
+        }
+
         public void SelectedDevice_PacketReceived(object sender, PacketCapture e)
         {
             try
@@ -142,10 +185,27 @@ namespace PacketSniffer
             RaisePropertyChanged(nameof(DeviceNames));
         }
 
+        public List<DisplayPacket> SearchPackets ()
+        {
+            List<DisplayPacket> searchPackets = new List<DisplayPacket>();
+            for (int i = 0; i < SniffedPackets.Count; i++)
+            {
+                RawCapture packet = SniffedPackets[i];
+                byte[] dataBytes = packet.Data;
+                string data = System.Text.Encoding.ASCII.GetString(dataBytes);
+                if(data.ToLower().Contains(SearchText.ToLower()))
+                {
+                    searchPackets.Add(DisplayPackets[i]);
+                }
+            }
+            return searchPackets;
+        }
+
         public async Task StartSniffing()
         {
             try
             {
+                IsSniffing= true;
                 selectedDevice.OnPacketArrival += new PacketArrivalEventHandler(SelectedDevice_PacketReceived);
                 int readTimeoutMillis = 1000;
                 selectedDevice.Open(DeviceModes.Promiscuous, readTimeoutMillis);
@@ -168,6 +228,7 @@ namespace PacketSniffer
         {
             try
             {
+                IsSniffing= false;
                 selectedDevice.OnPacketArrival -= new PacketArrivalEventHandler(SelectedDevice_PacketReceived);
                 if (selectedDevice.Opened)
                 {
@@ -183,10 +244,13 @@ namespace PacketSniffer
 
         private void UpdatePacketText()
         {
-            RawCapture packet = SniffedPackets[SelectedPacketIndex];
-            byte[] dataBytes = packet.Data;
-            string text = System.Text.Encoding.ASCII.GetString(dataBytes);
-            PacketDataText = text;
+            if (SelectedPacketIndex >= 0)
+            {
+                RawCapture packet = SniffedPackets[SelectedPacketIndex];
+                byte[] dataBytes = packet.Data;
+                string text = System.Text.Encoding.ASCII.GetString(dataBytes);
+                PacketDataText = text;
+            }
         }
         #endregion
     }
